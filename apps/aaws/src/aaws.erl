@@ -82,6 +82,9 @@ json_dump_role(Role) ->
     Filename = fmt("files/~s.json", [RoleName]),
     file:write_file(Filename, json_format(convert(Role))).
 
+json_dump_roles(Roles) ->
+    file:write_file("files/roles.json", json_format([convert(X) || X <- Roles])).
+
 json_format(Data) ->
     jsx:format(jsx:encode(Data), [{space, 1}, {indent, 2}]).
 
