@@ -9,6 +9,7 @@
 -vsn(1.0).
 -compile(export_all).
 
+-include_lib("erlcloud/include/erlcloud_aws.hrl").
 -include_lib("xmerl/include/xmerl.hrl").
 
 output_error(Resp) ->
@@ -76,6 +77,13 @@ json_dump_role() ->
     Ret3 = convert(Role),
     file:write_file("files/role_id.json", jsx:format(jsx:encode(Ret3), [{space, 1}, {indent, 2}])).
 
+json_dump_role(Role) ->
+    RoleName = proplists:get_value(role_name, Role),
+    Filename = fmt("files/~s.json", [RoleName]),
+    file:write_file(Filename, json_format(convert(Role))).
+
+json_format(Data) ->
+    jsx:format(jsx:encode(Data), [{space, 1}, {indent, 2}]).
 
 %%------------------------------------------------------------------------------
 %% Xml Response helpers
@@ -84,3 +92,8 @@ list_fields(Resp) ->
     [H | _] = Resp,
     XmlItems = element(9, H),
     [X#xmlElement.name || X <- XmlItems, is_record(X, xmlElement)].
+
+%% @doc Performs string interpolation
+-spec fmt(string(), [any()]) -> string().
+fmt(String, Args) ->
+    lists:flatten(io_lib:format(String, Args)).
