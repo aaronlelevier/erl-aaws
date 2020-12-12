@@ -59,7 +59,7 @@ convert_value(Val, "DateTime") ->
     ),
     list_to_binary(Str);
 convert_value(Val, "Uri") ->
-    list_to_binary(Val).
+    jsx:decode(list_to_binary(Val)).
 
 -spec str_format(String :: string(), Args :: list()) -> string().
 str_format(String, Args) ->
